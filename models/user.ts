@@ -10,6 +10,8 @@ export interface user_schema extends Document{
         createdAt: Date,
         updatedAt: Date,
         status: String,
+        otpVerify: 'pending' | 'verified',
+        
 }
 const user = new Schema<user_schema>({
   name: {
@@ -48,6 +50,11 @@ const user = new Schema<user_schema>({
   status: {
     type: String,
     default: 'active',
+  },
+  otpVerify: {
+    type: String,
+    enum: ['pending', 'verified'],
+    default: 'pending',
   },
 });
 

@@ -62,5 +62,10 @@ const user = new mongoose_1.Schema({
         type: String,
         default: 'active',
     },
+    otpVerify: {
+        type: String,
+        enum: ['pending', 'verified'],
+        default: 'pending',
+    },
 });
 exports.User = mongoose_1.default.model('User', user);

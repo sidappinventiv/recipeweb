@@ -15,11 +15,12 @@ export const validateToken = async (ctx: Context, next: Next) => {
   }
 
   try {
-    const decoded = jwt.verify(token,'dfghjw');
+    const decoded = jwt.verify(token,'sdfukzsy');
     ctx.state.user = decoded; 
     await next();
   } catch (err) {
     ctx.status = 403;
+    console.log(err)
     ctx.body = { error: 'invalid token' };
   }
 };

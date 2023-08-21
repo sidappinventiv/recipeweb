@@ -1,29 +1,39 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createcategory = void 0;
+exports.deletecatagory = exports.createcatagory = void 0;
 const catagory_1 = require("../models/catagory");
-const createcategory = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+const createcatagory = async (ctx) => {
     try {
         const { name } = ctx.request.body;
         const newCategory = new catagory_1.Catagory({
             name,
         });
-        yield newCategory.save();
+        await newCategory.save();
         ctx.status = 201;
-        ctx.body = { message: 'Category created successfully', category: newCategory };
+        ctx.body = { message: 'Catagory created successfully', category: newCategory };
     }
     catch (error) {
         ctx.status = 500;
-        ctx.body = { error: 'An error occurred' };
+        ctx.body = { error: ' error occurred' };
     }
-});
-exports.createcategory = createcategory;
+};
+exports.createcatagory = createcatagory;
+const deletecatagory = async (ctx) => {
+    try {
+        const { name } = ctx.request.body;
+        const deletedCatagory = await catagory_1.Catagory.deleteOne({ name });
+        if (!deletedCatagory) {
+            ctx.status = 404;
+            ctx.body = { error: 'catagory not found' };
+            return;
+        }
+        ctx.status = 200;
+        ctx.body = { message: 'ctagory deleted successfully' };
+    }
+    catch (error) {
+        console.error(error);
+        ctx.status = 500;
+        ctx.body = { error: 'err occurred while deleting the catagory.' };
+    }
+};
+exports.deletecatagory = deletecatagory;

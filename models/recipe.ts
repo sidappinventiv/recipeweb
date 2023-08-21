@@ -79,6 +79,7 @@ const recipe = new Schema<Recipe_Schema>({
     {
       type: Schema.Types.ObjectId,
       ref: 'User', 
+      required:false
     },
   ],
 });

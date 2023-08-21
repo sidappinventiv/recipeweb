@@ -28,4 +28,3 @@ dbconn()
     process.exit(1);
   });
 
-

@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -29,10 +6,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const koa_router_1 = __importDefault(require("koa-router"));
 const onboard_1 = require("../controller/onboard");
 const verification_1 = require("../middleware/verification");
-const catagory = __importStar(require("../controller/catagory"));
+const catagory_1 = require("../controller/catagory");
+const recipe_c_1 = require("../controller/recipe_c");
+const recipe_c_2 = require("../controller/recipe_c");
+const recipe_c_3 = require("../controller/recipe_c");
+const recipe_c_4 = require("../controller/recipe_c");
+const review_1 = require("../controller/review");
 const router = new koa_router_1.default();
-router.post('/signup', onboard_1.signup);
+// router.post('/signup', validateSignupInput, signup);
+// router.post('/signup',signup);
 router.post('/login', onboard_1.login);
-router.post('/logout', verification_1.validateToken, onboard_1.logout);
-router.post('/categories', catagory.createcategory);
+router.delete('/logout', onboard_1.logout);
+router.post('/categories', verification_1.validateToken, catagory_1.createcatagory);
+router.post('/recipe', verification_1.validateToken, recipe_c_1.createrecipe);
+router.put('/updaterecipe/:id', verification_1.validateToken, recipe_c_2.updaterecipe);
+router.get('/explorerecipe', verification_1.validateToken, recipe_c_3.explorerecipe);
+router.get('/getrecipe', verification_1.validateToken, recipe_c_4.getRecipe);
+router.delete('/deletecatagory', catagory_1.deletecatagory);
+router.post('/createreview', review_1.createReview);
+router.post('/sendotp', onboard_1.sendOTP);
+router.post('/verifyotp', onboard_1.verifyAndRegisterUser);
 exports.default = router;

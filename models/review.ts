@@ -4,7 +4,7 @@ import { Recipe_Schema } from './recipe';
 
 export interface Review_schema extends Document {
   rating: number;
-  recipe: mongoose.Types.ObjectId | Recipe_Schema;
+  recipeId: mongoose.Types.ObjectId | Recipe_Schema;
   likes: number;
   comments: string[];
   createdAt: Date;
@@ -16,7 +16,7 @@ const review = new Schema<Review_schema>({
     type: Number,
     required: true,
   },
-  recipe: {
+  recipeId: {
     type: Schema.Types.ObjectId,
     ref: 'Recipe',
     required: true,

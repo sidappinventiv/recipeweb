@@ -1,6 +1,5 @@
 import Koa from 'koa';
 import mongoose from 'mongoose';
-import * as models from './models/common'
 const app = new Koa();
 const CONNECT_URL = 'mongodb+srv://siddhi:siddhi@cluster0.5ywv5v7.mongodb.net/';
 
@@ -14,4 +13,5 @@ export const dbconn = async () => {
     process.exit(1);
   }
 };
+
 

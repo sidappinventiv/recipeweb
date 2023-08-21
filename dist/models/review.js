@@ -30,7 +30,7 @@ const review = new mongoose_1.Schema({
         type: Number,
         required: true,
     },
-    recipe: {
+    recipeId: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'Recipe',
         required: true,
