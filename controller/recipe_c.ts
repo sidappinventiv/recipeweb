@@ -1,11 +1,11 @@
 import { Context } from "koa";
 import mongoose from "mongoose";
-import { Recipe } from "../models/recipe";
-
+import { Recipe } from "../models/allmodels";
 export const createrecipe = async (ctx: Context) => {
   try {
     const {
-      catagory,
+      // catagory,
+      categories,
       author,
       title,
       description,
@@ -16,7 +16,11 @@ export const createrecipe = async (ctx: Context) => {
       directions,
       collaborators,
     } = ctx.request.body as {
-      catagory: mongoose.Types.ObjectId,
+      categories: {
+        catagory: mongoose.Types.ObjectId | string,
+        subcategories: string[], 
+      }[],
+      // catagory: mongoose.Types.ObjectId,
       author: mongoose.Types.ObjectId,
       title: string,
       description: string,
@@ -27,9 +31,10 @@ export const createrecipe = async (ctx: Context) => {
       directions: Array<{ stepNo: number, content: string }>,
       collaborators: Array<mongoose.Types.ObjectId>,
     };
-
+    // console.log(catagory)
     const newRecipe = new Recipe({
-      catagory,
+      categories,
+      // catagory,
       author,
       title,
       description,
@@ -52,13 +57,13 @@ export const createrecipe = async (ctx: Context) => {
   }
 }
 
-// *************************************************************
+
 
 export const getRecipe = async (ctx: Context) => {
     try {
       const {_id} = ctx.request.body as { _id: mongoose.Types.ObjectId };
   
-      const recipe = await Recipe.findById(_id);
+      const recipe = await Recipe.findById(_id).populate('categories.catagory');
   
 if (!recipe) {
         ctx.status = 404;
@@ -73,6 +78,8 @@ if (!recipe) {
       ctx.body = { error: 'error occurred while grtng the recipe.' };
     }
   };
+
+
 
 export const updaterecipe = async (ctx: Context) => {
   try {
@@ -149,18 +156,18 @@ export const explorerecipe = async (ctx: Context) => {
     //     $match: { catagory: {category} } 
     //   });
     // }
-    if (author) {
-      aggregationPipeline.push({
-        $match: { author:author } 
-      });
-    }
+    // if (author) {
+    //   aggregationPipeline.push({
+    //     $match: { author:author } 
+    //   });
+    // }
     // console.log(author)
 
-    // aggregationPipeline.push({
-    //     $match: {
-    //       description: { $regex: "Italian", $options: 'i' }
-    //     }
-    //   });
+    aggregationPipeline.push({
+        $match: {
+          description: { $regex: "Italian", $options: 'i' }
+        }
+      });
       console.log(aggregationPipeline)
 
     const recipes = await Recipe.aggregate(aggregationPipeline);
@@ -171,5 +178,29 @@ export const explorerecipe = async (ctx: Context) => {
     console.error(error);
     ctx.status = 500;
     ctx.body = { error: 'error occurred exploring recipes.' };
+  }
+};
+
+
+
+
+export const deleteRecipe = async (ctx: Context) => {
+  try {
+    const { recipeId } = ctx.params; 
+
+    const deletedRecipe = await Recipe.findByIdAndDelete(recipeId);
+
+    if (!deletedRecipe) {
+      ctx.status = 404;
+      ctx.body = { error: 'Recipe not found' };
+      return;
+    }
+
+    ctx.status = 200;
+    ctx.body = { message: 'Recipe deleted successfully' };
+  } catch (error) {
+    console.error('An error occurred:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'An error occurred' };
   }
 };

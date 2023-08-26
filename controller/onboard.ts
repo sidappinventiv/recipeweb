@@ -1,13 +1,13 @@
 
-import { Context } from 'koa';
+import { Context, Next } from 'koa';
 import bcrypt from 'bcrypt';
-import Joi from 'joi';
-import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
-import { User } from '../models/user';
 import { createToken } from '../middleware/createtoken';
 import { createClient } from 'redis';
-import { SessionModel } from '../models/session';
+import {SessionModel,User} from '../models/allmodels'
+import mongoose from 'mongoose';
+
+
 const client = createClient();
 const smtpTransport = nodemailer.createTransport({
   service: 'gmail',
@@ -19,6 +19,7 @@ const smtpTransport = nodemailer.createTransport({
     pass: 'zfmmoojbfnqkrats',
   },
 });
+
 
 
 export const sendOTP = async (ctx: Context) => {
@@ -33,7 +34,12 @@ export const sendOTP = async (ctx: Context) => {
       email: string;
     };
 
-
+    const useremail = await User.findOne({ email });
+    if (useremail) {
+      ctx.status = 409; 
+      ctx.body = { error: 'email already exists' };
+      return;
+    }
     const OTP = Math.floor(1000 + Math.random() * 9000);
 
     await redisClient.set(email, OTP.toString());
@@ -56,10 +62,12 @@ export const sendOTP = async (ctx: Context) => {
 };
 
 
+
+
 export const verifyAndRegisterUser = async (ctx: Context) => {
 
   const redisClient = createClient();
-  redisClient.on('error', (err) => console.error('Redis Error:', err));
+  redisClient.on('error', (err) => console.error('redis error:', err));
   await redisClient.connect();
   try {
     const { email, otp, password, name } = ctx.request.body as {
@@ -70,11 +78,19 @@ export const verifyAndRegisterUser = async (ctx: Context) => {
     };
 
     const storedOTP = await redisClient.get(email);
-    if (!storedOTP || storedOTP !== otp) {
+
+    if (!storedOTP) {
       ctx.status = 400;
-      ctx.body = { error: 'invalid OTP' };
+      ctx.body = { error: 'Invalid email' };
       return;
     }
+
+    if (storedOTP !== otp) {
+      ctx.status = 400;
+      ctx.body = { error: 'Invalid OTP' };
+      return;
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       email,
@@ -91,7 +107,7 @@ export const verifyAndRegisterUser = async (ctx: Context) => {
   } catch (error) {
     console.error('error occurred:', error);
     ctx.status = 500;
-    ctx.body = { error: 'An error occurred' };
+    ctx.body = { error: 'error occurred' };
   }
 };
 
@@ -129,8 +145,8 @@ export const login = async (ctx: any) => {
       return;
     }
 
-    const token = await createToken(ctx);
-
+    // const token =await createToken(ctx);
+    const token =await createToken(ctx, user._id.toString());
 
 
     const session = new SessionModel({
@@ -140,10 +156,14 @@ export const login = async (ctx: any) => {
       // sessionId: uniqueSessionIdGenerator(), 
     });
     await session.save();
+    const sessionData = {
+      user: user,
+      token: token
+    };
     const redisClient = createClient();
     redisClient.on('error', (err) => console.error('Redis Error:', err));
     await redisClient.connect();
-    await redisClient.set(`${user._id}_session`, JSON.stringify(user));
+    await redisClient.set(`${user['_id']}_session`, JSON.stringify(sessionData));
 
     ctx.status = 200;
     ctx.body = { messege: 'login suscessfull', token };
@@ -156,18 +176,52 @@ export const login = async (ctx: any) => {
 
 
 
-export const logout = async (ctx: Context) => {
-  try {
-    const token = ctx.headers.authorization?.split(' ')[1];
 
-    if (!token) {
-      ctx.status = 401;
-      ctx.body = { error: 'Unauthorized' };
+export const  addProfileImage= async (ctx: Context) => {
+  try {
+    
+    const {userId} = ctx.query
+    const buffer:any = ctx.req
+   const file = buffer.file.buffer;
+  console.log(file,userId)
+    if (!file) {
+      ctx.status = 400;
+      ctx.body = { error: 'no imag provided' };
       return;
     }
-    const decodedToken = jwt.verify(token, 'sdfukzsy') as { userId: string };
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        profileImg: file,
+      },
+      { new: true }
+    );
 
-    const user = await User.findById(decodedToken.userId);
+    if (!updatedUser) {
+      ctx.status = 404;
+      ctx.body = { error: 'user not found' };
+      return;
+    }
+    
+    ctx.status = 200;
+    ctx.body = { message: 'profile image updated successfully', user: updatedUser };
+    // ctx.body = { message: 'profile image updated successfully'};
+
+  } catch (error) {
+    console.error('an error occurred:', error);
+    ctx.status = 500;
+    ctx.body = { error: ' error occurred' };
+  }
+};
+
+
+
+export const deleteprofileimage = async (ctx: Context) => {
+  try {
+    const { userId } = ctx.query;
+
+    
+    const user = await User.findById(userId);
 
     if (!user) {
       ctx.status = 404;
@@ -175,37 +229,118 @@ export const logout = async (ctx: Context) => {
       return;
     }
 
+    user.profileImg = Buffer.alloc(0);
+    await user.save();
 
-    // await User.deleteOne({ _id: decodedToken.userId });
     ctx.status = 200;
-    ctx.body = { message: 'Logout successful' };
+    ctx.body = { message: 'Profile image deleted successfully' };
   } catch (error) {
+    console.error('An error occurred:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'An error occurred' };
+  }
+};
+
+export const addProfileData = async (ctx: Context) => {
+  try {
+    const {userId} = ctx.query 
+    const { bio, website, socialLink } = ctx.request.body as {
+      bio:String,
+      website:String,
+      socialLink: {
+        facebook?: string;
+        twitter?: string;
+        others?: string;
+      };
+    } 
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        bio,
+        website,
+        socialLink,
+      },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      ctx.status = 404;
+      ctx.body = { error: 'User not found' };
+      return;
+    }
+
+    ctx.status = 200;
+    ctx.body = { message: 'Profile data updated successfully', user: updatedUser };
+  } catch (error) {
+    console.error('An error occurred:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'An error occurred' };
+  }
+};
+
+export const deleteProfileData = async (ctx: Context) => {
+  try {
+    const { userId } = ctx.query;
+
+    const deletedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $unset: {
+          website: 1,
+          socialLink: 1,
+          bio: 1,
+        },
+      },
+      { new: true }
+    );
+    if (!deletedUser) {
+      ctx.status = 404;
+      ctx.body = { error: 'User not found' };
+      return;
+    }
+
+    ctx.status = 200;
+    ctx.body = { message: 'Profile data deleted successfully' };
+  } catch (error) {
+    console.error('An error occurred:', error);
     ctx.status = 500;
     ctx.body = { error: 'An error occurred' };
   }
 };
 
 
-function uniqueSessionIdGenerator(): any {
-  throw new Error('Function not implemented.');
-}
-// export const logout = async (ctx: Context) => {
-//   try {
-//     const token = ctx.headers.authorization?.split(' ')[1];
 
-//     if (!token) {
-//       ctx.status = 401;
-//       ctx.body = { error: 'Unauthorized' };
-//       return;
-//     }
-//     ctx.status = 200;
-//     ctx.body = { message: 'Logout successful' };
-//   } catch (error) {
-//     ctx.status = 500;
-//     ctx.body = { error: 'An error occurred' };
-//   }
-// };
+export const logout = async (ctx: any) => {
+  try {
+    const { userId } = ctx.request.body as {
+      userId: mongoose.Types.ObjectId;
+    }; 
 
+    if (!userId) {
+      ctx.status = 400;
+      ctx.body = { error: 'User ID is required' };
+      return;
+    }
+
+    const redisClient = createClient();
+    redisClient.on('error', (err) => console.error('Redis Error:', err));
+    await redisClient.connect();
+
+    await redisClient.del(`${userId}_session`);
+
+    await SessionModel.updateOne(
+      { user_id: userId },
+      { $set: { status: 0 } }
+    );
+
+    ctx.status = 200;
+    ctx.body = { message: 'Logout successful' };
+  } catch (error) {
+    console.error(error);
+    ctx.status = 500;
+    ctx.body = { error: 'An error occurred' };
+  }
+};
 
 
 

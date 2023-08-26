@@ -29,6 +29,9 @@ const catagory = new mongoose_1.Schema({
     name: {
         type: String, required: true
     },
+    subcategories: [{
+            type: String,
+        }],
     createdAt: {
         type: Date,
         default: Date.now,

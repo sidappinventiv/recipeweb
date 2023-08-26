@@ -12,9 +12,13 @@ interface direction {
   stepNo: number;
   content: string;
 }
+interface Subcategory {
+  catagory: mongoose.Types.ObjectId | catagory_schema;
+  subcategories: string[];
+}
 
 export interface Recipe_Schema extends Document {
-  catagory: mongoose.Types.ObjectId | catagory_schema;
+  // catagory: mongoose.Types.ObjectId | catagory_schema;
   author: mongoose.Types.ObjectId | user_schema;
   title: string;
   description: string;
@@ -27,14 +31,25 @@ export interface Recipe_Schema extends Document {
   updatedAt: Date;
   status: string;
   collaborators: mongoose.Types.ObjectId[] | user_schema[];
+  categories: Subcategory[];
 }
 
 const recipe = new Schema<Recipe_Schema>({
-  catagory: {
-    type: Schema.Types.ObjectId,
-    ref: 'Catagory', 
-    required: true,
-  },
+  categories: [
+    {
+      catagory: {
+        type: Schema.Types.ObjectId,
+        ref: 'catagory',
+        required: true,
+      },
+      subcategories: [String],
+    },
+  ],
+  // catagory: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'Catagory', 
+  //   required: true,
+  // },
   author: {
     type: Schema.Types.ObjectId,
     ref: 'User', 

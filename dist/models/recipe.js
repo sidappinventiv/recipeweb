@@ -26,11 +26,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Recipe = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const recipe = new mongoose_1.Schema({
-    catagory: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Catagory',
-        required: true,
-    },
+    categories: [
+        {
+            catagory: {
+                type: mongoose_1.Schema.Types.ObjectId,
+                ref: 'catagory',
+                required: true,
+            },
+            subcategories: [String],
+        },
+    ],
+    // catagory: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: 'Catagory', 
+    //   required: true,
+    // },
     author: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',

@@ -1,29 +1,36 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const koa_router_1 = __importDefault(require("koa-router"));
-const onboard_1 = require("../controller/onboard");
-const verification_1 = require("../middleware/verification");
-const catagory_1 = require("../controller/catagory");
-const recipe_c_1 = require("../controller/recipe_c");
-const recipe_c_2 = require("../controller/recipe_c");
-const recipe_c_3 = require("../controller/recipe_c");
-const recipe_c_4 = require("../controller/recipe_c");
-const review_1 = require("../controller/review");
-const router = new koa_router_1.default();
+// import Router from 'koa-router';
+// import { login ,logout, sendOTP, updateProfile, verifyAndRegisterUser} from '../controller/onboard';
+// import { validateToken } from '../middleware/verification';
+// import { validateSignupInput } from '../middleware/joi';
+// import { createcatagory, deletecatagory, getCatagory, updateCategory } from '../controller/catagory';
+// import { createrecipe, deleteRecipe } from '../controller/recipe_c';
+// import { updaterecipe } from '../controller/recipe_c';
+// import { explorerecipe } from '../controller/recipe_c';
+// import { getRecipe } from '../controller/recipe_c';
+// import { createReview, getreviewbyid } from '../controller/review';
+// import { addFollower, getFollowers } from '../controller/follower';
+// import { alcoholshelf } from '../controller/3rd_partyapi';
+// const router = new Router();
 // router.post('/signup', validateSignupInput, signup);
 // router.post('/signup',signup);
-router.post('/login', onboard_1.login);
-router.delete('/logout', onboard_1.logout);
-router.post('/categories', verification_1.validateToken, catagory_1.createcatagory);
-router.post('/recipe', verification_1.validateToken, recipe_c_1.createrecipe);
-router.put('/updaterecipe/:id', verification_1.validateToken, recipe_c_2.updaterecipe);
-router.get('/explorerecipe', verification_1.validateToken, recipe_c_3.explorerecipe);
-router.get('/getrecipe', verification_1.validateToken, recipe_c_4.getRecipe);
-router.delete('/deletecatagory', catagory_1.deletecatagory);
-router.post('/createreview', review_1.createReview);
-router.post('/sendotp', onboard_1.sendOTP);
-router.post('/verifyotp', onboard_1.verifyAndRegisterUser);
-exports.default = router;
+// router.post('/login', login);
+// router.delete('/logout', validateToken,logout);
+// router.post('/categories',createcatagory);
+// router.post('/recipe',createrecipe)
+// router.delete('/deleterecipe/:recipeId',deleteRecipe)
+// router.put('/updaterecipe/:id',validateToken,updaterecipe)
+// router.get('/explorerecipe',validateToken,explorerecipe);
+// router.get('/getrecipe',getRecipe)
+// router.delete('/deletecatagory',deletecatagory)
+// router.put('/updatecategory', updateCategory);
+// router.get('/getcatagory', getCatagory);
+// router.post('/createreview',createReview)
+// router.post('/sendotp',sendOTP)
+// router.post('/verifyotp',verifyAndRegisterUser)
+// router.post('/addfollower',addFollower)
+// router.get('/followers/:user_id', getFollowers);
+// router.post('updateprofile',updateProfile)
+// router.get('/reviews/:id', getreviewbyid);
+// router.get('/alcohol-shelf/:size', alcoholshelf);
+// export default router;

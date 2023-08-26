@@ -35,6 +35,11 @@ const review = new mongoose_1.Schema({
         ref: 'Recipe',
         required: true,
     },
+    userId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     likes: {
         type: Number,
         default: 0,

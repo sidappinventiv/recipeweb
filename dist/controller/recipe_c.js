@@ -1,12 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.explorerecipe = exports.updaterecipe = exports.getRecipe = exports.createrecipe = void 0;
-const recipe_1 = require("../models/recipe");
+exports.deleteRecipe = exports.explorerecipe = exports.updaterecipe = exports.getRecipe = exports.createrecipe = void 0;
+const allmodels_1 = require("../models/allmodels");
 const createrecipe = async (ctx) => {
     try {
-        const { catagory, author, title, description, prepTime, cookTime, totalTime, ingredients, directions, collaborators, } = ctx.request.body;
-        const newRecipe = new recipe_1.Recipe({
-            catagory,
+        const { 
+        // catagory,
+        categories, author, title, description, prepTime, cookTime, totalTime, ingredients, directions, collaborators, } = ctx.request.body;
+        // console.log(catagory)
+        const newRecipe = new allmodels_1.Recipe({
+            categories,
+            // catagory,
             author,
             title,
             description,
@@ -28,11 +32,10 @@ const createrecipe = async (ctx) => {
     }
 };
 exports.createrecipe = createrecipe;
-// *************************************************************
 const getRecipe = async (ctx) => {
     try {
         const { _id } = ctx.request.body;
-        const recipe = await recipe_1.Recipe.findById(_id);
+        const recipe = await allmodels_1.Recipe.findById(_id).populate('categories.catagory');
         if (!recipe) {
             ctx.status = 404;
             ctx.body = { error: 'recipe not found' };
@@ -52,7 +55,7 @@ const updaterecipe = async (ctx) => {
     try {
         const recipeId = ctx.params.id;
         const { catagory, author, title, description, prepTime, cookTime, totalTime, ingredients, directions, collaborators, } = ctx.request.body;
-        const updatedrecipe = await recipe_1.Recipe.findByIdAndUpdate(recipeId, {
+        const updatedrecipe = await allmodels_1.Recipe.findByIdAndUpdate(recipeId, {
             catagory,
             author,
             title,
@@ -88,19 +91,19 @@ const explorerecipe = async (ctx) => {
         //     $match: { catagory: {category} } 
         //   });
         // }
-        if (author) {
-            aggregationPipeline.push({
-                $match: { author: author }
-            });
-        }
-        // console.log(author)
-        // aggregationPipeline.push({
-        //     $match: {
-        //       description: { $regex: "Italian", $options: 'i' }
-        //     }
+        // if (author) {
+        //   aggregationPipeline.push({
+        //     $match: { author:author } 
         //   });
+        // }
+        // console.log(author)
+        aggregationPipeline.push({
+            $match: {
+                description: { $regex: "Italian", $options: 'i' }
+            }
+        });
         console.log(aggregationPipeline);
-        const recipes = await recipe_1.Recipe.aggregate(aggregationPipeline);
+        const recipes = await allmodels_1.Recipe.aggregate(aggregationPipeline);
         console.log(recipes);
         ctx.status = 200;
         ctx.body = recipes;
@@ -112,3 +115,22 @@ const explorerecipe = async (ctx) => {
     }
 };
 exports.explorerecipe = explorerecipe;
+const deleteRecipe = async (ctx) => {
+    try {
+        const { recipeId } = ctx.params;
+        const deletedRecipe = await allmodels_1.Recipe.findByIdAndDelete(recipeId);
+        if (!deletedRecipe) {
+            ctx.status = 404;
+            ctx.body = { error: 'Recipe not found' };
+            return;
+        }
+        ctx.status = 200;
+        ctx.body = { message: 'Recipe deleted successfully' };
+    }
+    catch (error) {
+        console.error('An error occurred:', error);
+        ctx.status = 500;
+        ctx.body = { error: 'An error occurred' };
+    }
+};
+exports.deleteRecipe = deleteRecipe;

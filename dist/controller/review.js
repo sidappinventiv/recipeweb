@@ -1,46 +1,53 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createReview = void 0;
-const recipe_1 = require("../models/recipe");
-const review_1 = require("../models/review");
+exports.deleteReview = exports.updateReviewById = exports.getreviewbyid = exports.createReview = void 0;
+const mongoose_1 = __importDefault(require("mongoose"));
+const allmodels_1 = require("../models/allmodels");
 const redis_1 = require("redis");
 const createReview = async (ctx) => {
     try {
-        const { rating, recipeId, likes, comments, } = ctx.request.body;
+        const { rating, recipeId, userId, likes, comments, } = ctx.request.body;
+        console.log("--", recipeId, "--", userId);
         const redisClient = (0, redis_1.createClient)();
         redisClient.on('error', (err) => console.error('Redis Error:', err));
         await redisClient.connect();
-        const existingRecipe = await recipe_1.Recipe.findOne({ _id: recipeId });
+        const existingRecipe = await allmodels_1.Recipe.findOne({ _id: recipeId });
         if (!existingRecipe) {
             ctx.status = 404;
             ctx.body = { error: 'Recipe not found' };
             return;
         }
-        const reviewExists = await review_1.Review.findOne({ recipeId: recipeId });
-        if (reviewExists) {
-            reviewExists.likes += 1;
-            reviewExists.comments.push(comments);
-            await reviewExists.save();
-            const totalLikes = reviewExists.likes;
-            redisClient.set("mostLikedRecipes", reviewExists._id.toString() + " " + totalLikes);
-            ctx.body = reviewExists;
+        // console.log("exist",existingRecipe)
+        const userReview = await allmodels_1.Review.findOne({ recipeId: recipeId, userId: userId });
+        if (userReview) {
+            userReview.likes += 1;
+            userReview.comments.push(comments);
+            await userReview.save();
         }
         else {
-            const newReview = new review_1.Review({
+            const newReview = new allmodels_1.Review({
                 rating,
                 recipeId: existingRecipe._id,
+                userId,
                 likes,
                 comments,
             });
-            const savedReview = await newReview.save();
-            console.log(existingRecipe);
-            newReview.likes += newReview.likes;
-            await existingRecipe.save();
-            redisClient.set("mostLikedRecipes", newReview._id.toString() + " " +
-                (newReview.likes + likes).toString());
-            ctx.status = 201;
-            ctx.body = savedReview;
+            await newReview.save();
         }
+        console.log(userReview);
+        const mostLikedReviews = await allmodels_1.Review.find({ recipeId: recipeId })
+            .sort({ likes: -1 })
+            .limit(5);
+        const mostLikedReviewsData = mostLikedReviews.map(review => ({
+            reviewId: review._id.toString(),
+            likes: review.likes,
+        }));
+        redisClient.set(`mostlikedRecipes:${recipeId}`, JSON.stringify(mostLikedReviewsData));
+        ctx.status = 201;
+        ctx.body = { message: 'Review added successfully' };
     }
     catch (error) {
         console.error(error);
@@ -49,3 +56,138 @@ const createReview = async (ctx) => {
     }
 };
 exports.createReview = createReview;
+const getreviewbyid = async (ctx) => {
+    try {
+        const reviewId = ctx.params.id;
+        if (!mongoose_1.default.Types.ObjectId.isValid(reviewId)) {
+            ctx.status = 400;
+            ctx.body = { error: 'invalid review ID format' };
+            return;
+        }
+        const review = await allmodels_1.Review.findById(reviewId);
+        if (!review) {
+            ctx.status = 404;
+            ctx.body = { error: 'Review not found' };
+            return;
+        }
+        ctx.status = 200;
+        ctx.body = review;
+    }
+    catch (error) {
+        console.error(error);
+        ctx.status = 500;
+        ctx.body = { error: 'An error occurred while fetching review.' };
+    }
+};
+exports.getreviewbyid = getreviewbyid;
+const updateReviewById = async (ctx) => {
+    try {
+        const { reviewId } = ctx.params;
+        const { rating, likes, comments } = ctx.request.body;
+        const review = await allmodels_1.Review.findByIdAndUpdate(reviewId, { rating, likes, comments }, { new: true });
+        if (!review) {
+            ctx.status = 404;
+            ctx.body = { error: 'Review not found' };
+            return;
+        }
+        ctx.status = 200;
+        ctx.body = review;
+    }
+    catch (error) {
+        console.error(error);
+        ctx.status = 500;
+        ctx.body = { error: 'An error occurred while updating review.' };
+    }
+};
+exports.updateReviewById = updateReviewById;
+const deleteReview = async (ctx) => {
+    try {
+        const { reviewId, userId, } = ctx.request.body;
+        const review = await allmodels_1.Review.findOne({ _id: reviewId, userId: userId });
+        if (!review) {
+            ctx.status = 404;
+            ctx.body = { error: 'Review not found' };
+            return;
+        }
+        await allmodels_1.Review.deleteOne({ _id: reviewId, userId: userId });
+        const redisClient = (0, redis_1.createClient)();
+        redisClient.on('error', (err) => console.error('Redis Error:', err));
+        await redisClient.connect();
+        const recipeId = review.recipeId.toString();
+        const mostLikedReviews = await allmodels_1.Review.find({ recipeId: review.recipeId })
+            .sort({ likes: -1 })
+            .limit(5);
+        const mostLikedReviewsData = mostLikedReviews.map(review => ({
+            reviewId: review._id.toString(),
+            likes: review.likes,
+        }));
+        redisClient.set(`mostlikedRecipes:${recipeId}`, JSON.stringify(mostLikedReviewsData));
+        ctx.status = 200;
+        ctx.body = { message: 'Review deleted successfully' };
+    }
+    catch (error) {
+        console.error(error);
+        ctx.status = 500;
+        ctx.body = { error: 'An error occurred while deleting the review.' };
+    }
+};
+exports.deleteReview = deleteReview;
+// export const createReview = async (ctx: Context) => {
+//   try {
+//     const {
+//       rating,
+//       recipeId, 
+//       likes,
+//       comments,
+//     } = ctx.request.body as {
+//       rating: number;
+//       recipeId: mongoose.Types.ObjectId;
+//       likes: number;
+//       comments: string;
+//     };
+//     const redisClient = createClient();
+//     redisClient.on('error', (err) => console.error('Redis Error:', err));
+//     await redisClient.connect();
+//     const existingRecipe = await Recipe.findOne({ _id: recipeId });
+//     if (!existingRecipe) {
+//       ctx.status = 404;
+//       ctx.body = { error: 'Recipe not found' };
+//       return;
+//     }
+//     const reviewExists = await Review.findOne({ recipeId: recipeId })
+//     if (reviewExists) {
+//       reviewExists.likes += 1
+//       reviewExists.comments.push(comments)
+//       await reviewExists.save();
+//       const totalLikes = reviewExists.likes
+//       redisClient.set(
+//         "mostLikedRecipes",
+//         reviewExists._id.toString()+" "+totalLikes
+//       );
+//       ctx.body = reviewExists;
+//     }
+//     else {
+//       const newReview = new Review({
+//         rating,
+//         recipeId: existingRecipe._id,
+//         likes,
+//         comments,
+//       });
+//       const savedReview = await newReview.save();
+//       console.log(existingRecipe)
+//       newReview.likes += newReview.likes
+//       await existingRecipe.save();
+//       redisClient.set(
+//         "mostLikedRecipes",
+//         newReview._id.toString()+" "+
+//         (newReview.likes + likes).toString()
+//       );
+//       ctx.status = 201;
+//       ctx.body = savedReview;
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     ctx.status = 500;
+//     ctx.body = { error: 'error occurred while creating  review.' };
+//   }
+// };

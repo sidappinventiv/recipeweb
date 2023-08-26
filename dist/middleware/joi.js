@@ -3,41 +3,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateSignupInput = void 0;
+exports.validateCreateReview = exports.validateLogin = exports.validateVerifyAndRegisterUser = exports.validateSendOTP = void 0;
 const joi_1 = __importDefault(require("joi"));
-const validateSignupInput = async (ctx, next) => {
-    const schema = joi_1.default.object({
-        name: joi_1.default.string().required(),
-        email: joi_1.default.string().email().required(),
-        password: joi_1.default.string().required(),
-    });
-    const validation = schema.validate(ctx.request.body);
-    if (validation.error) {
-        ctx.status = 400;
-        ctx.body = { error: 'Validation failed', details: validation.error.details };
-        return;
-    }
-    await next();
-};
-exports.validateSignupInput = validateSignupInput;
-// import Joi from 'joi';
-// import Koa from 'koa';
-// import Router from 'koa-router';
-// const userRouter = new Router();
-// export const validate = (schema: Joi.Schema) => {
-//   return async (ctx: Koa.Context, next: Koa.Next) => {
-//     try {
-//       const result = await schema.validateAsync(ctx.request.body);
-//       ctx.request.body = result;
-//       await next();
-//     } catch (err: any) 
-//     { 
-//       ctx.body = { error: 'Validation error', details: err.details };
-//     }
-//   };
-// };
-// export const schema = Joi.object({
-//   name: Joi.string().required(),
-//   email: Joi.string().email().required(),
-//   password: Joi.string().required(),
-// });
+function validate(schema) {
+    return async (ctx, next) => {
+        const { error } = schema.validate(ctx.request.body);
+        if (error) {
+            ctx.status = 400;
+            ctx.body = { error: error.details[0].message };
+            return;
+        }
+        await next();
+    };
+}
+exports.validateSendOTP = validate(joi_1.default.object({
+    email: joi_1.default.string().email().required(),
+}));
+exports.validateVerifyAndRegisterUser = validate(joi_1.default.object({
+    email: joi_1.default.string().email().required(),
+    otp: joi_1.default.string().required(),
+    password: joi_1.default.string().required(),
+    name: joi_1.default.string().required(),
+}));
+exports.validateLogin = validate(joi_1.default.object({
+    email: joi_1.default.string().email().required(),
+    password: joi_1.default.string().required(),
+}));
+exports.validateCreateReview = validate(joi_1.default.object({
+    rating: joi_1.default.number().required().max(5),
+    recipeId: joi_1.default.string().required(),
+    userId: joi_1.default.string().required(),
+    likes: joi_1.default.number().valid(1).required(),
+    comments: joi_1.default.string().required(),
+}));

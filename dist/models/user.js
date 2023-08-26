@@ -45,8 +45,9 @@ const user = new mongoose_1.Schema({
     website: { type: String,
         required: false, },
     socialLink: {
-        type: String,
-        enum: ['inst', 'fb', 'others'],
+        facebook: String,
+        twitter: String,
+        others: String,
     },
     profileImg: { type: Buffer,
     },

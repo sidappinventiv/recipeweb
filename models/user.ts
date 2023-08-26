@@ -4,8 +4,12 @@ export interface user_schema extends Document{
         email: String,
         password: String,
         bio: String,
-        website: String,
-        socialLink: String,
+        website?: String,
+        socialLink: {
+          facebook?: string;
+          twitter?: string;
+          others?: string;
+        };
         profileImg: Buffer,
         createdAt: Date,
         updatedAt: Date,
@@ -33,10 +37,12 @@ const user = new Schema<user_schema>({
   website:{ type:String,
     required:false,},
 
-  socialLink: {
-    type: String,
-    enum: ['inst', 'fb', 'others'],
-  },
+    socialLink: {
+      facebook: String,
+      twitter: String,
+      others: String,
+    },
+
   profileImg: {type:Buffer,
 },
   createdAt: {
