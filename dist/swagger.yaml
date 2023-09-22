@@ -1,604 +1,604 @@
-swagger: '2.0'
-info:
-  title: recipe book 
-  version: 2.0.0
-basePath: /
-schemes:
-  - http
-consumes:
-  - application/json
-produces:
-  - application/json
-paths:
-  /sendOTP:
-    post:
-      summary: Send OTP to email
-      parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-      responses:
-        '200':
-          description: OTP sent successfully
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  /verifyAndRegisterUser:
-    post:
-      summary: Verify OTP and register user
-      parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-              otp:
-                type: string
-              password:
-                type: string
-              name:
-                type: string
-      responses:
-        '201':
-          description: User registered successfully
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  /login:
-    post:
-      summary: Authenticate user and generate token
-      parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-              password:
-                type: string
-      responses:
-        '200':
-          description: Successful login
-        '401':
-          description: Unauthorized
-        '403':
-          description: OTP verification pending
-        '500':
-          description: Internal server error
+# swagger: '2.0'
+# info:
+#   title: recipe book 
+#   version: 2.0.0
+# basePath: /
+# schemes:
+#   - http
+# consumes:
+#   - application/json
+# produces:
+#   - application/json
+# paths:
+#   /sendOTP:
+#     post:
+#       summary: Send OTP to email
+#       parameters:
+#         - in: body
+#           name: body
+#           required: true
+#           schema:
+#             type: object
+#             properties:
+#               email:
+#                 type: string
+#       responses:
+#         '200':
+#           description: OTP sent successfully
+#         '400':
+#           description: Bad request
+#         '500':
+#           description: Internal server error
+#   /verifyAndRegisterUser:
+#     post:
+#       summary: Verify OTP and register user
+#       parameters:
+#         - in: body
+#           name: body
+#           required: true
+#           schema:
+#             type: object
+#             properties:
+#               email:
+#                 type: string
+#               otp:
+#                 type: string
+#               password:
+#                 type: string
+#               name:
+#                 type: string
+#       responses:
+#         '201':
+#           description: User registered successfully
+#         '400':
+#           description: Bad request
+#         '500':
+#           description: Internal server error
+#   /login:
+#     post:
+#       summary: Authenticate user and generate token
+#       parameters:
+#         - in: body
+#           name: body
+#           required: true
+#           schema:
+#             type: object
+#             properties:
+#               email:
+#                 type: string
+#               password:
+#                 type: string
+#       responses:
+#         '200':
+#           description: Successful login
+#         '401':
+#           description: Unauthorized
+#         '403':
+#           description: OTP verification pending
+#         '500':
+#           description: Internal server error
 
-  /addProfileImage:
-    post:
-      summary: Upload a profile image
-      consumes:
-        - multipart/form-data
-      parameters:
-        - name: userId
-          in: query
-          required: true
-          type: string
-        - name: profileImg
-          in: formData
-          required: true
-          type: file
-      responses:
-        '200':
-          description: Profile image updated successfully
-        '400':
-          description: Bad request
-        '404':
-          description: User not found
-        '500':
-          description: An error occurred
+#   /addProfileImage:
+#     post:
+#       summary: Upload a profile image
+#       consumes:
+#         - multipart/form-data
+#       parameters:
+#         - name: userId
+#           in: query
+#           required: true
+#           type: string
+#         - name: profileImg
+#           in: formData
+#           required: true
+#           type: file
+#       responses:
+#         '200':
+#           description: Profile image updated successfully
+#         '400':
+#           description: Bad request
+#         '404':
+#           description: User not found
+#         '500':
+#           description: An error occurred
 
-  /deleteprofileimage:
-    post:
-      summary: Delete profile image
-      parameters:
-        - name: userId
-          in: query
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Profile image deleted successfully
-        '404':
-          description: User not found
-        '500':
-          description: An error occurred
+#   /deleteprofileimage:
+#     post:
+#       summary: Delete profile image
+#       parameters:
+#         - name: userId
+#           in: query
+#           required: true
+#           type: string
+#       responses:
+#         '200':
+#           description: Profile image deleted successfully
+#         '404':
+#           description: User not found
+#         '500':
+#           description: An error occurred
 
-  /addProfileData:
-    post:
-      summary: Add profile data
-      parameters:
-        - name: userId
-          in: query
-          required: true
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                bio:
-                  type: string
-                website:
-                  type: string
-                socialLink:
-                  type: object
-                  properties:
-                    facebook:
-                      type: string
-                    twitter:
-                      type: string
-                    others:
-                      type: string
-      responses:
-        '200':
-          description: Profile data updated successfully
-        '404':
-          description: User not found
-        '500':
-          description: An error occurred
+#   /addProfileData:
+#     post:
+#       summary: Add profile data
+#       parameters:
+#         - name: userId
+#           in: query
+#           required: true
+#           type: string
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 bio:
+#                   type: string
+#                 website:
+#                   type: string
+#                 socialLink:
+#                   type: object
+#                   properties:
+#                     facebook:
+#                       type: string
+#                     twitter:
+#                       type: string
+#                     others:
+#                       type: string
+#       responses:
+#         '200':
+#           description: Profile data updated successfully
+#         '404':
+#           description: User not found
+#         '500':
+#           description: An error occurred
 
-  /deleteProfileData:
-    delete:
-      summary: Delete profile data
-      parameters:
-        - name: userId
-          in: query
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Profile data deleted successfully
-        '404':
-          description: User not found
-        '500':
-          description: An error occurred
+#   /deleteProfileData:
+#     delete:
+#       summary: Delete profile data
+#       parameters:
+#         - name: userId
+#           in: query
+#           required: true
+#           type: string
+#       responses:
+#         '200':
+#           description: Profile data deleted successfully
+#         '404':
+#           description: User not found
+#         '500':
+#           description: An error occurred
 
-  /logout:
-    post:
-      summary: Logout user
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                userId:
-                  type: string
-      responses:
-        '200':
-          description: Logout successful
-        '400':
-          description: Bad request
-        '500':
-          description: An error occurred
+#   /logout:
+#     post:
+#       summary: Logout user
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 userId:
+#                   type: string
+#       responses:
+#         '200':
+#           description: Logout successful
+#         '400':
+#           description: Bad request
+#         '500':
+#           description: An error occurred
 
-  /addFollower:
-    post:
-      summary: Add follower
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                follower:
-                  type: string
-                  format: uuid
-                following:
-                  type: string
-                  format: uuid
-      responses:
-        '201':
-          description: Follower added successfully
-        '400':
-          description: Bad request
-        '404':
-          description: One or both users not found
-        '500':
-          description: An error occurred
+#   /addFollower:
+#     post:
+#       summary: Add follower
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 follower:
+#                   type: string
+#                   format: uuid
+#                 following:
+#                   type: string
+#                   format: uuid
+#       responses:
+#         '201':
+#           description: Follower added successfully
+#         '400':
+#           description: Bad request
+#         '404':
+#           description: One or both users not found
+#         '500':
+#           description: An error occurred
 
-  /getFollowers/{user_id}:
-    get:
-      summary: Get followers of a user
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          type: string
-          format: uuid
-      responses:
-        '200':
-          description: Followers retrieved successfully
-        '400':
-          description: Bad request
-        '500':
-          description: An error occurred
+#   /getFollowers/{user_id}:
+#     get:
+#       summary: Get followers of a user
+#       parameters:
+#         - name: user_id
+#           in: path
+#           required: true
+#           type: string
+#           format: uuid
+#       responses:
+#         '200':
+#           description: Followers retrieved successfully
+#         '400':
+#           description: Bad request
+#         '500':
+#           description: An error occurred
 
-  /checkFollowerStatus:
-    get:
-      summary: Check follower status
-      parameters:
-        - name: follower
-          in: query
-          required: true
-          type: string
-          format: uuid
-        - name: following
-          in: query
-          required: true
-          type: string
-          format: uuid
-      responses:
-        '200':
-          description: Follower status checked successfully
-        '400':
-          description: Bad request
-        '500':
-          description: An error occurred
+#   /checkFollowerStatus:
+#     get:
+#       summary: Check follower status
+#       parameters:
+#         - name: follower
+#           in: query
+#           required: true
+#           type: string
+#           format: uuid
+#         - name: following
+#           in: query
+#           required: true
+#           type: string
+#           format: uuid
+#       responses:
+#         '200':
+#           description: Follower status checked successfully
+#         '400':
+#           description: Bad request
+#         '500':
+#           description: An error occurred
 
-  /removeFollower:
-    post:
-      summary: Remove follower relationship
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                follower:
-                  type: string
-                  format: uuid
-                following:
-                  type: string
-                  format: uuid
-      responses:
-        '200':
-          description: User unfollowed successfully
-        '400':
-          description: Bad request
-        '404':
-          description: One or both users not found
-        '500':
-          description: An error occurred
+#   /removeFollower:
+#     post:
+#       summary: Remove follower relationship
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 follower:
+#                   type: string
+#                   format: uuid
+#                 following:
+#                   type: string
+#                   format: uuid
+#       responses:
+#         '200':
+#           description: User unfollowed successfully
+#         '400':
+#           description: Bad request
+#         '404':
+#           description: One or both users not found
+#         '500':
+#           description: An error occurred
 
-  /getMutualFollowers:
-    get:
-      summary: Get mutual followers between two users
-      parameters:
-        - name: user1_id
-          in: query
-          required: true
-          type: string
-          format: uuid
-        - name: user2_id
-          in: query
-          required: true
-          type: string
-          format: uuid
-      responses:
-        '200':
-          description: Mutual followers retrieved successfully
-        '400':
-          description: Bad request
-        '500':
-          description: An error occurred
-
-
-  /createcatagory:
-    post:
-      summary: Create category
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                subcategories:
-                  type: array
-                  items:
-                    type: string
-      responses:
-        '201':
-          description: Category created successfully
-        '400':
-          description: Bad request
-        '409':
-          description: Category already exists
-        '500':
-          description: An error occurred
-
-  /updateCategory:
-    post:
-      summary: Update category
-      parameters:
-        - name: categoryId
-          in: query
-          required: true
-          type: string
-          format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-      responses:
-        '200':
-          description: Category updated successfully
-        '400':
-          description: Bad request
-        '404':
-          description: Category not found
-        '500':
-          description: An error occurred
-
-  /getCatagory:
-    get:
-      summary: Get category by ID
-      parameters:
-        - name: categoryId
-          in: query
-          required: true
-          type: string
-          format: uuid
-      responses:
-        '200':
-          description: Category retrieved successfully
-        '400':
-          description: Bad request
-        '404':
-          description: Category not found
-        '500':
-          description: An error occurred
-
-  /deletecatagory:
-    delete:
-      summary: Delete category by name
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-      responses:
-        '200':
-          description: Category deleted successfully
-        '400':
-          description: Bad request
-        '404':
-          description: Category not found
-        '500':
-          description: An error occurred
+#   /getMutualFollowers:
+#     get:
+#       summary: Get mutual followers between two users
+#       parameters:
+#         - name: user1_id
+#           in: query
+#           required: true
+#           type: string
+#           format: uuid
+#         - name: user2_id
+#           in: query
+#           required: true
+#           type: string
+#           format: uuid
+#       responses:
+#         '200':
+#           description: Mutual followers retrieved successfully
+#         '400':
+#           description: Bad request
+#         '500':
+#           description: An error occurred
 
 
-  /createrecipe:
-    post:
-      summary: Create recipe
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                categories:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      catagory:
-                        type: string
-                      subcategories:
-                        type: array
-                        items:
-                          type: string
-                author:
-                  type: string
-                title:
-                  type: string
-                description:
-                  type: string
-                prepTime:
-                  type: string
-                cookTime:
-                  type: string
-                totalTime:
-                  type: string
-                ingredients:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                      quantity:
-                        type: string
-                directions:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      stepNo:
-                        type: number
-                      content:
-                        type: string
-                collaborators:
-                  type: array
-                  items:
-                    type: string
-      responses:
-        '201':
-          description: Recipe created successfully
-        '500':
-          description: An error occurred
+#   /createcatagory:
+#     post:
+#       summary: Create category
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 name:
+#                   type: string
+#                 subcategories:
+#                   type: array
+#                   items:
+#                     type: string
+#       responses:
+#         '201':
+#           description: Category created successfully
+#         '400':
+#           description: Bad request
+#         '409':
+#           description: Category already exists
+#         '500':
+#           description: An error occurred
 
-  /getRecipe:
-    post:
-      summary: Get recipe by ID
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                _id:
-                  type: string
-      responses:
-        '200':
-          description: Recipe retrieved successfully
-        '404':
-          description: Recipe not found
-        '500':
-          description: An error occurred
+#   /updateCategory:
+#     post:
+#       summary: Update category
+#       parameters:
+#         - name: categoryId
+#           in: query
+#           required: true
+#           type: string
+#           format: uuid
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 name:
+#                   type: string
+#                 description:
+#                   type: string
+#       responses:
+#         '200':
+#           description: Category updated successfully
+#         '400':
+#           description: Bad request
+#         '404':
+#           description: Category not found
+#         '500':
+#           description: An error occurred
 
-  /updaterecipe/{recipeId}:
-    post:
-      summary: Update recipe by ID
-      parameters:
-        - name: recipeId
-          in: path
-          required: true
-          type: string
-          format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
+#   /getCatagory:
+#     get:
+#       summary: Get category by ID
+#       parameters:
+#         - name: categoryId
+#           in: query
+#           required: true
+#           type: string
+#           format: uuid
+#       responses:
+#         '200':
+#           description: Category retrieved successfully
+#         '400':
+#           description: Bad request
+#         '404':
+#           description: Category not found
+#         '500':
+#           description: An error occurred
+
+#   /deletecatagory:
+#     delete:
+#       summary: Delete category by name
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 name:
+#                   type: string
+#       responses:
+#         '200':
+#           description: Category deleted successfully
+#         '400':
+#           description: Bad request
+#         '404':
+#           description: Category not found
+#         '500':
+#           description: An error occurred
 
 
-  /createReview:
-    post:
-      summary: Create review
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                rating:
-                  type: number
-                recipeId:
-                  type: string
-                userId:
-                  type: string
-                likes:
-                  type: number
-                comments:
-                  type: string
-      responses:
-        '201':
-          description: Review created successfully
-        '500':
-          description: An error occurred
+#   /createrecipe:
+#     post:
+#       summary: Create recipe
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 categories:
+#                   type: array
+#                   items:
+#                     type: object
+#                     properties:
+#                       catagory:
+#                         type: string
+#                       subcategories:
+#                         type: array
+#                         items:
+#                           type: string
+#                 author:
+#                   type: string
+#                 title:
+#                   type: string
+#                 description:
+#                   type: string
+#                 prepTime:
+#                   type: string
+#                 cookTime:
+#                   type: string
+#                 totalTime:
+#                   type: string
+#                 ingredients:
+#                   type: array
+#                   items:
+#                     type: object
+#                     properties:
+#                       name:
+#                         type: string
+#                       quantity:
+#                         type: string
+#                 directions:
+#                   type: array
+#                   items:
+#                     type: object
+#                     properties:
+#                       stepNo:
+#                         type: number
+#                       content:
+#                         type: string
+#                 collaborators:
+#                   type: array
+#                   items:
+#                     type: string
+#       responses:
+#         '201':
+#           description: Recipe created successfully
+#         '500':
+#           description: An error occurred
 
-  /getreviewbyid/{id}:
-    get:
-      summary: Get review by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Review retrieved successfully
-        '400':
-          description: Invalid review ID format
-        '404':
-          description: Review not found
-        '500':
-          description: An error occurred
+#   /getRecipe:
+#     post:
+#       summary: Get recipe by ID
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 _id:
+#                   type: string
+#       responses:
+#         '200':
+#           description: Recipe retrieved successfully
+#         '404':
+#           description: Recipe not found
+#         '500':
+#           description: An error occurred
 
-  /updateReviewById/{reviewId}:
-    post:
-      summary: Update review by ID
-      parameters:
-        - name: reviewId
-          in: path
-          required: true
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                rating:
-                  type: number
-                likes:
-                  type: number
-                comments:
-                  type: array
-                  items:
-                    type: string
-      responses:
-        '200':
-          description: Review updated successfully
-        '404':
-          description: Review not found
-        '500':
-          description: An error occurred
+#   /updaterecipe/{recipeId}:
+#     post:
+#       summary: Update recipe by ID
+#       parameters:
+#         - name: recipeId
+#           in: path
+#           required: true
+#           type: string
+#           format: uuid
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
 
-  /deleteReview:
-    delete:
-      summary: Delete review
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                reviewId:
-                  type: string
-                userId:
-                  type: string
-      responses:
-        '200':
-          description: Review deleted successfully
-        '404':
-          description: Review not found
-        '500':
-          description: An error occurred
 
-/alcoholshelf/{size}:
-    get:
-      summary: Fetch alcohol shelf data
-      parameters:
-        - name: size
-          in: path
-          required: true
-          type: integer
-          description: Number of alcohol items to fetch
-      responses:
-        '200':
-          description: Alcohol shelf data retrieved successfully
-        '400':
-          description: Invalid size parameter
-        '500':
-          description: An error occurred while fetching alcohol data
+#   /createReview:
+#     post:
+#       summary: Create review
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 rating:
+#                   type: number
+#                 recipeId:
+#                   type: string
+#                 userId:
+#                   type: string
+#                 likes:
+#                   type: number
+#                 comments:
+#                   type: string
+#       responses:
+#         '201':
+#           description: Review created successfully
+#         '500':
+#           description: An error occurred
+
+#   /getreviewbyid/{id}:
+#     get:
+#       summary: Get review by ID
+#       parameters:
+#         - name: id
+#           in: path
+#           required: true
+#           type: string
+#       responses:
+#         '200':
+#           description: Review retrieved successfully
+#         '400':
+#           description: Invalid review ID format
+#         '404':
+#           description: Review not found
+#         '500':
+#           description: An error occurred
+
+#   /updateReviewById/{reviewId}:
+#     post:
+#       summary: Update review by ID
+#       parameters:
+#         - name: reviewId
+#           in: path
+#           required: true
+#           type: string
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 rating:
+#                   type: number
+#                 likes:
+#                   type: number
+#                 comments:
+#                   type: array
+#                   items:
+#                     type: string
+#       responses:
+#         '200':
+#           description: Review updated successfully
+#         '404':
+#           description: Review not found
+#         '500':
+#           description: An error occurred
+
+#   /deleteReview:
+#     delete:
+#       summary: Delete review
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 reviewId:
+#                   type: string
+#                 userId:
+#                   type: string
+#       responses:
+#         '200':
+#           description: Review deleted successfully
+#         '404':
+#           description: Review not found
+#         '500':
+#           description: An error occurred
+
+# /alcoholshelf/{size}:
+#     get:
+#       summary: Fetch alcohol shelf data
+#       parameters:
+#         - name: size
+#           in: path
+#           required: true
+#           type: integer
+#           description: Number of alcohol items to fetch
+#       responses:
+#         '200':
+#           description: Alcohol shelf data retrieved successfully
+#         '400':
+#           description: Invalid size parameter
+#         '500':
+#           description: An error occurred while fetching alcohol data
 
 
 

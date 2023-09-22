@@ -6,11 +6,16 @@ const app = new Koa();
 export function createToken(ctx: Koa.ParameterizedContext, userId: string) {
   const key = process.env.JWT_SECRET;
   if (!key) {
+
     throw new Error('JWT secret key is missing');
+
   }
   const token = jwt.sign(
+
     { userId },
+
     key,
+    
     { expiresIn: '5h' }
   );
   return token;

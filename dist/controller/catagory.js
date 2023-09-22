@@ -48,22 +48,6 @@ const updateCategory = async (ctx) => {
     }
 };
 exports.updateCategory = updateCategory;
-// export const getCatagory = async (ctx: Context) => {
-//   try {
-//     const categoryId = ctx.query.id;
-//     const category = await Catagory.findById(categoryId);
-//     if (!category) {
-//       ctx.status = 404;
-//       ctx.body = { error: 'Category not found' };
-//       return;
-//     }
-//     ctx.status = 200;
-//     ctx.body = category;
-//   } catch (error) {
-//     ctx.status = 500;
-//     ctx.body = { error: 'An error occurred while fetching the category' };
-//   }
-// };
 const getCatagory = async (ctx) => {
     try {
         const categoryId = ctx.query.categoryId;

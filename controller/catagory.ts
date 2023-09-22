@@ -3,8 +3,10 @@ import { Context } from 'koa';
 import { Catagory } from '../models/allmodels';
 
 
+
 export const createcatagory = async (ctx: Context) => {
   try {
+
     const { name ,subcategories} = ctx.request.body as { name: string ,subcategories:string[],};
 
 

@@ -72,7 +72,6 @@ const checkFollowerStatus = async (ctx) => {
     }
 };
 exports.checkFollowerStatus = checkFollowerStatus;
-// Assuming you have the necessary imports and setup
 const removeFollower = async (ctx) => {
     try {
         const { follower, following } = ctx.request.body;
@@ -81,7 +80,6 @@ const removeFollower = async (ctx) => {
             ctx.body = { error: 'Both followerId and followingId are required' };
             return;
         }
-        // Check if the follower and following users exist
         const followerUser = await allmodels_1.User.findById(follower);
         const followingUser = await allmodels_1.User.findById(following);
         if (!followerUser || !followingUser) {
@@ -89,7 +87,6 @@ const removeFollower = async (ctx) => {
             ctx.body = { error: 'One or both users not found' };
             return;
         }
-        // Remove the following relationship
         const removedFollowing = await allmodels_1.Following.findOneAndDelete({
             follower: followerUser._id,
             following: followingUser._id,

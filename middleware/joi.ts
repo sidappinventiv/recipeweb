@@ -23,7 +23,7 @@ function validate(schema:Joi.Schema) {
   export const validateVerifyAndRegisterUser = validate(Joi.object({
     email: Joi.string().email().required(),
     otp: Joi.string().required(),
-    password: Joi.string().required(),
+    password: Joi.string().required().min(8) .pattern(new RegExp('^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?!.*\\s).*$')),
     name: Joi.string().required(),
   }));
 
@@ -41,4 +41,15 @@ function validate(schema:Joi.Schema) {
     likes: Joi.number().valid(1).required(),
     comments: Joi.string().required(),
   }));
+
+  export const validateResetPassword = validate(Joi.object({
+    email: Joi.string().email().required(),
+    otp: Joi.string().required(),
+    newPassword: Joi.string()
+      .required()
+      .min(8)
+      .pattern(new RegExp('^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?!.*\\s).*$')),
+    resetToken: Joi.string().required(), 
+  }));
+
   

@@ -9,7 +9,7 @@ socket.on('connect', () => {
     console.log('Connected to server');
     socket.emit('new-user', 'Alice');
     setTimeout(() => {
-        socket.emit('send-chat-message', { name: 'Alice', message: 'Hello, everyone!' });
+        socket.emit('send-chat-message', { name: 'sid', message: 'Hello, everyone!' });
     }, 1000);
 });
 socket.on('user-connected', (name) => {

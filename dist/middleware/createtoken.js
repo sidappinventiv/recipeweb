@@ -7,7 +7,6 @@ exports.createToken = void 0;
 const koa_1 = __importDefault(require("koa"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const app = new koa_1.default();
-// const secretKey = 'sdfukzsy';
 function createToken(ctx, userId) {
     const key = process.env.JWT_SECRET;
     if (!key) {

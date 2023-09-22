@@ -1,6 +1,6 @@
 import { Context } from "koa";
 import mongoose from "mongoose";
-import { Recipe } from "../models/allmodels";
+import { Catagory, Recipe } from "../models/allmodels";
 export const createrecipe = async (ctx: Context) => {
   try {
     const {
@@ -56,6 +56,9 @@ export const createrecipe = async (ctx: Context) => {
     ctx.body = { error: 'error occurred while creating recipe.' };
   }
 }
+
+
+
 
 
 
@@ -149,7 +152,6 @@ export const explorerecipe = async (ctx: Context) => {
     
     const { category, author } = ctx.request.query;
 
-    
 
     // if (category) {
     //   aggregationPipeline.push({
@@ -204,3 +206,21 @@ export const deleteRecipe = async (ctx: Context) => {
     ctx.body = { error: 'An error occurred' };
   }
 };
+
+
+
+// const find_nearest_cook  = async (ctx:any) =>
+// {
+//   try{
+//     const latitute = ctx.body.latitute,
+//     const longitude = ctx.body.longitude
+
+//     Store.aggregate{[
+//       { 
+//                 $geonear:{
+//           near:{type:"point",coordinates:[parseFloat(longitude),parseFloat(latitute)]}
+//         }
+//       }
+//     ]}
+//   }
+// }

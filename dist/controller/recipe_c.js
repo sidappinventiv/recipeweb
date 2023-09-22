@@ -134,3 +134,17 @@ const deleteRecipe = async (ctx) => {
     }
 };
 exports.deleteRecipe = deleteRecipe;
+// const find_nearest_cook  = async (ctx:any) =>
+// {
+//   try{
+//     const latitute = ctx.body.latitute,
+//     const longitude = ctx.body.longitude
+//     Store.aggregate{[
+//       { 
+//                 $geonear:{
+//           near:{type:"point",coordinates:[parseFloat(longitude),parseFloat(latitute)]}
+//         }
+//       }
+//     ]}
+//   }
+// }

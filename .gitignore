@@ -1,3 +1,5 @@
 /node_modules
 /router.ts
 /swaggerconfig.ts
+/dist
+/.env
