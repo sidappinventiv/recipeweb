@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logout = exports.deleteProfileData = exports.addProfileData = exports.deleteprofileimage = exports.addProfileImage = exports.AuthController = void 0;
+exports.deleteProfileData = exports.addProfileData = exports.deleteprofileimage = exports.addProfileImage = exports.AuthController = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const createtoken_1 = require("../middleware/createtoken");
@@ -12,7 +12,6 @@ const allmodels_1 = require("../models/allmodels");
 const googleapis_1 = require("googleapis");
 const fs_1 = __importDefault(require("fs"));
 const crypto_1 = __importDefault(require("crypto"));
-const client = (0, redis_1.createClient)();
 const smtpTransport = nodemailer_1.default.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
@@ -23,6 +22,7 @@ const smtpTransport = nodemailer_1.default.createTransport({
         pass: 'zfmmoojbfnqkrats',
     },
 });
+const client = (0, redis_1.createClient)();
 class AuthController {
     constructor() {
         this.redisClient = client;
@@ -149,7 +149,6 @@ class AuthController {
     async resetLink(ctx) {
         try {
             const { email } = ctx.request.body;
-            // Check if the user exists
             const userExists = await allmodels_1.User.findOne({ email });
             if (!userExists) {
                 ctx.status = 404;
@@ -244,6 +243,29 @@ class AuthController {
             ctx.body = 'Error occurred';
         }
     }
+    async logout(ctx) {
+        try {
+            const { userId } = ctx.request.body;
+            if (!userId) {
+                ctx.status = 400;
+                ctx.body = { error: 'User ID is required' };
+                return;
+            }
+            const redisClient = (0, redis_1.createClient)();
+            redisClient.on('error', (err) => console.error('Redis Error:', err));
+            await redisClient.connect();
+            await redisClient.del(`${userId}_session`);
+            await allmodels_1.SessionModel.updateOne({ user_id: userId }, { $set: { status: 0 } });
+            ctx.status = 200;
+            ctx.body = { message: 'Logout successful' };
+        }
+        catch (error) {
+            console.error(error);
+            ctx.status = 500;
+            ctx.body = { error: 'An error occurred' };
+        }
+    }
+    ;
 }
 exports.AuthController = AuthController;
 const addProfileImage = async (ctx) => {
@@ -345,26 +367,3 @@ const deleteProfileData = async (ctx) => {
     }
 };
 exports.deleteProfileData = deleteProfileData;
-const logout = async (ctx) => {
-    try {
-        const { userId } = ctx.request.body;
-        if (!userId) {
-            ctx.status = 400;
-            ctx.body = { error: 'User ID is required' };
-            return;
-        }
-        const redisClient = (0, redis_1.createClient)();
-        redisClient.on('error', (err) => console.error('Redis Error:', err));
-        await redisClient.connect();
-        await redisClient.del(`${userId}_session`);
-        await allmodels_1.SessionModel.updateOne({ user_id: userId }, { $set: { status: 0 } });
-        ctx.status = 200;
-        ctx.body = { message: 'Logout successful' };
-    }
-    catch (error) {
-        console.error(error);
-        ctx.status = 500;
-        ctx.body = { error: 'An error occurred' };
-    }
-};
-exports.logout = logout;

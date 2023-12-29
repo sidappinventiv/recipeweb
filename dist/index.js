@@ -9,8 +9,10 @@ const dbconnection_1 = require("./dbconnection");
 const koa_bodyparser_1 = __importDefault(require("koa-bodyparser"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const commonroute_1 = require("./routes/commonroute");
+const logging_colorify_1 = require("logging-colorify");
 dotenv_1.default.config();
 app.use((0, koa_bodyparser_1.default)());
+(0, logging_colorify_1.logError)("this is the main file error ");
 (0, dbconnection_1.dbconn)()
     .then(() => {
     commonroute_1.commonRoutes.forEach(Router => {

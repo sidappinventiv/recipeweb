@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteRecipe = exports.explorerecipe = exports.updaterecipe = exports.getRecipe = exports.createrecipe = void 0;
 const allmodels_1 = require("../models/allmodels");
+const logging_colorify_1 = require("logging-colorify");
 const createrecipe = async (ctx) => {
     try {
         const { 
@@ -22,6 +23,7 @@ const createrecipe = async (ctx) => {
             collaborators,
         });
         const savedRecipe = await newRecipe.save();
+        await (0, logging_colorify_1.createApiLogger)(ctx.request);
         ctx.status = 201;
         ctx.body = savedRecipe;
     }
@@ -35,6 +37,7 @@ exports.createrecipe = createrecipe;
 const getRecipe = async (ctx) => {
     try {
         const { _id } = ctx.request.body;
+        console.log(ctx.request.ip);
         const recipe = await allmodels_1.Recipe.findById(_id).populate('categories.catagory');
         if (!recipe) {
             ctx.status = 404;

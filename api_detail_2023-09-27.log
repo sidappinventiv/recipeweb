@@ -1,0 +1,59 @@
+{
+  "method": "POST",
+  "path": "/recipe",
+  "query": {},
+  "headers": {
+    "content-type": "application/json",
+    "user-agent": "PostmanRuntime/7.32.3",
+    "accept": "*/*",
+    "postman-token": "d849ce12-e3bb-47ec-b5cc-9e16bbf080fc",
+    "host": "localhost:3000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "695"
+  },
+  "body": {
+    "categories": [
+      {
+        "catagory": "64e9a614a1be12aac70424f3",
+        "subcategories": [
+          "Indian",
+          "Chinese"
+        ]
+      },
+      {
+        "catagory": "64e9b021a1be12aac70424f5",
+        "subcategories": [
+          "Dinner"
+        ]
+      }
+    ],
+    "author": "64e6eaab837595f8f1d899e4",
+    "title": "Malai Kojta",
+    "description": "A mouthwatering recipe",
+    "prepTime": "30 minutes",
+    "cookTime": "1 hour",
+    "totalTime": "1.5 hours",
+    "ingredients": [
+      {
+        "name": "lauki",
+        "quantity": "1/2 kg"
+      },
+      {
+        "name": "masale",
+        "quantity": "basic ones"
+      }
+    ],
+    "directions": [
+      {
+        "stepNo": 1,
+        "content": "Step 1: add lauku ,fry it ,stir masale"
+      },
+      {
+        "stepNo": 2,
+        "content": "Step 2: add topping malai"
+      }
+    ]
+  },
+  "timestamp": "2023-09-27T07:39:42.474Z"
+}

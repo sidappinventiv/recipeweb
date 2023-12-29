@@ -6,24 +6,25 @@ import bodyParser from 'koa-bodyparser';
 import dotenv from 'dotenv';
 import {commonRoutes} from './routes/commonroute';
 
-
+import {logError} from "logging-colorify"
 
 dotenv.config();
 app.use(bodyParser());
 
-
+logError("this is the main file error ")
 
 dbconn()
   .then(() => {
     commonRoutes.forEach(Router=> {
       app.use(Router.routes());
-      app.use(Router.allowedMethods());
+      app.use(Router.allowedMethods());  
     });
 
     app.listen(process.env.PORT, () => {
       console.log(`Server is running on port ${process.env.PORT}`);
     });
   })
+  
   .catch((error) => {
     console.error('Error connecting to the database:', error);
     process.exit(1);

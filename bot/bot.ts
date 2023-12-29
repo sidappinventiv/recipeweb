@@ -13,6 +13,10 @@ bot.onText(/\/start/, (msg) => {
 bot.startPolling();}
 
 
+
+
+   
+
 // import { Telegraf } from 'telegraf';
 // import {Configuration,OpenAI} from 'openai'
 

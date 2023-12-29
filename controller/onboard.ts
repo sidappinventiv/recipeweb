@@ -44,13 +44,15 @@ export class AuthController implements IAuthController{
       process.env.GOOGLEOAUTHREDIRECTURL
     );
 
+
+    
     try {
       const creds = fs.readFileSync("creds.json");
       const credsString = creds.toString();
       this.oAuth2Client.setCredentials(JSON.parse(credsString));
     } catch (err) {
       console.log("no creds there");
-    }
+    }   
   }
  
 

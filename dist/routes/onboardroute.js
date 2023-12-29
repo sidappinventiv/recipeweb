@@ -8,7 +8,6 @@ const onboard_1 = require("../controller/onboard");
 const multer_1 = require("../middleware/multer");
 const joi_1 = require("../middleware/joi");
 const verification_1 = require("../middleware/verification");
-// import { AuthController } from '../controller/onboard';
 const router = new koa_router_1.default();
 const authController = new onboard_1.AuthController();
 router.post('/sendotp', joi_1.validateSendOTP, async (ctx) => {
@@ -32,7 +31,9 @@ router.post('/resetlink', joi_1.validateSendOTP, async (ctx) => {
 router.post('/resetpassword', joi_1.validateResetPassword, async (ctx) => {
     await authController.resetPassword(ctx);
 });
-router.delete('/logout', onboard_1.logout);
+router.delete('/logout', async (ctx) => {
+    await authController.logout(ctx);
+});
 router.post('/upload', multer_1.upload.single('profileImg'), onboard_1.addProfileImage);
 router.post('/deleteprofileimg', verification_1.validateToken, onboard_1.deleteprofileimage);
 router.post('/addprofiledata', verification_1.validateToken, onboard_1.addProfileData);

@@ -1,6 +1,7 @@
 import { Context } from "koa";
 import mongoose from "mongoose";
 import { Catagory, Recipe } from "../models/allmodels";
+import { createApiLogger } from "logging-colorify";
 export const createrecipe = async (ctx: Context) => {
   try {
     const {
@@ -47,6 +48,8 @@ export const createrecipe = async (ctx: Context) => {
     });
 
     const savedRecipe = await newRecipe.save();
+    
+    await createApiLogger(ctx.request);
 
     ctx.status = 201;
     ctx.body = savedRecipe;
@@ -65,7 +68,7 @@ export const createrecipe = async (ctx: Context) => {
 export const getRecipe = async (ctx: Context) => {
     try {
       const {_id} = ctx.request.body as { _id: mongoose.Types.ObjectId };
-  
+      console.log(ctx.request.ip)
       const recipe = await Recipe.findById(_id).populate('categories.catagory');
   
 if (!recipe) {
@@ -104,7 +107,7 @@ export const updaterecipe = async (ctx: Context) => {
       author: mongoose.Types.ObjectId,
       title: string,
       description: string,
-      prepTime: string,
+      prepTime: string, 
       cookTime: string,
       totalTime: string,
       ingredients: Array<{ name: string, quantity: string }>,
